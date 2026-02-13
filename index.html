@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14 DE FEBRERO: Jessy</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>💕</text></svg>">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --rosa-principal: #ffb7c5;
+            --rosa-oscuro: #ff85a1;
+            --blanco-nube: #fff5f7;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--blanco-nube);
+            overflow-x: hidden;
+            color: #4a4a4a;
+        }
+
+        /* Corazones de fondo */
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Hero Section */
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(rgba(255, 183, 197, 0.3), rgba(255, 255, 255, 0));
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--rosa-oscuro);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-weight: bold;
+            color: #777;
+            letter-spacing: 1px;
+        }
+
+        /* Imagen de la pareja */
+        .foto-container {
+            width: 280px;
+            height: 280px;
+            margin: 30px auto;
+            border: 8px solid white;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transform: rotate(-2deg);
+            transition: transform 0.3s;
+        }
+
+        .foto-container:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        .foto-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Razones */
+        .reasons {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(255, 133, 161, 0.1);
+        }
+
+        .reason-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .reason-item span {
+            background: var(--rosa-principal);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        /* Botones */
+        .buttons-container {
+            margin: 20px auto 30px;
+            height: 80px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        #btn-si {
+            background-color: #ff4d6d;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        #btn-no {
+            background-color: #ddd;
+            color: #666;
+            position: relative;
+        }
+
+        /* Música */
+        .music-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Modal final */
+        #success-msg {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hearts" id="hearts-container"></div>
+
+    <header>
+        <h1>OPERACIÓN DIA DE LOS ENAMORADOS: JESSY</h1>
+        <p class="subtitle">Misión de alto riesgo (y mucho chocolate)</p>
+    </header>
+
+    <div class="foto-container">
+        <img src="Alex&Jessy-2.jpg" alt="Alex y Jessy">
+    </div>
+
+    <div class="reasons">
+        <h3 style="text-align: center; color: var(--rosa-oscuro);">¿Por qué tú?</h3>
+        <div class="reason-item">
+            <span>1</span>
+            <p>Porque sos mi azúcar... ¡tenía un lado dulce y me lo comí!</p>
+        </div>
+        <div class="reason-item">
+            <span>2</span>
+            <p>¡Sos la única que me aguanta cuando estoy en modo limón! 🍋</p>
+        </div>
+        <div class="reason-item">
+            <span>3</span>
+            <p>Tu belleza es tanta que si te llevo a un museo de arte, ¡te dejan dentro!</p>
+        </div>
+    </div>
+
+    <div class="buttons-container">
+        <button id="btn-si" class="btn" onclick="celebrar()">¡SÍ, ACEPTO!</button>
+        <button id="btn-no" class="btn" onmouseover="escapar()">No</button>
+    </div>
+
+    <div id="success-msg">
+        <h2 style="color: #ff4d6d;">¡SABÍA QUE NO PODÍAS RESISTIRTE! 💖</h2>
+        <p>Prepárate para el mejor 14 de febrero de tu vida. <br> Te amo mucho corazón.</p>
+        <button class="btn" style="background: var(--rosa-principal);"
+            onclick="document.getElementById('success-msg').style.display='none'">¡Very Si! 💖</button>
+    </div>
+
+    <div class="music-box">
+        <span style="font-size: 0.8rem;">🎵 I'm Yours - Jason Mraz</span>
+        <iframe width="0" height="0" src="https://www.youtube.com/embed/EkHTsc9PU2A?autoplay=1" frameborder="0"
+            allow="autoplay"></iframe>
+    </div>
+
+    <script>
+        // Función para que el botón "No" se mueva
+        function escapar() {
+            const btnNo = document.getElementById('btn-no');
+            btnNo.style.position = 'fixed';
+            const margin = 10;
+            const maxX = window.innerWidth - btnNo.offsetWidth - margin;
+            const maxY = window.innerHeight - btnNo.offsetHeight - margin;
+            const x = Math.max(margin, Math.random() * maxX);
+            const y = Math.max(margin, Math.random() * maxY);
+
+            btnNo.style.left = x + 'px';
+            btnNo.style.top = y + 'px';
+            btnNo.style.zIndex = '50';
+        }
+
+        // Función para el éxito
+        function celebrar() {
+            // Confetti
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ffb7c5', '#ff4d6d', '#ffffff']
+            });
+
+            // Mostrar mensaje
+            setTimeout(() => {
+                document.getElementById('success-msg').style.display = 'block';
+            }, 500);
+        }
+
+        // Generar corazones de fondo
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '100vh';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heart.style.opacity = Math.random();
+            heart.style.transition = 'transform 5s linear, opacity 5s';
+
+            document.getElementById('hearts-container').appendChild(heart);
+
+            setTimeout(() => {
+                heart.style.transform = `translateY(-110vh) rotate(${Math.random() * 360}deg)`;
+                heart.style.opacity = '0';
+            }, 100);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        setInterval(createHeart, 300);
+    </script>
+</body>
+
+</html>
