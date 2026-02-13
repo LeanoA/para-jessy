@@ -137,47 +137,54 @@
             background-color: #ff4d6d;
             color: white;
             box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            transition: transform 0.3s, font-size 0.3s, padding 0.3s;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: heartbeat 1.2s ease-in-out infinite;
+            --pulse: 1.04;
+            border: 2px solid #333;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+                filter: brightness(1);
+            }
+
+            15% {
+                box-shadow: 0 5px 25px rgba(255, 77, 109, 0.7);
+                filter: brightness(1.1);
+            }
+
+            30% {
+                box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+                filter: brightness(1);
+            }
+
+            45% {
+                box-shadow: 0 5px 20px rgba(255, 77, 109, 0.6);
+                filter: brightness(1.08);
+            }
+
+            60% {
+                box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+                filter: brightness(1);
+            }
         }
 
         #btn-no {
             background-color: #ddd;
             color: #666;
             position: relative;
+            transition: transform 0.3s, font-size 0.3s, padding 0.3s;
+            border: 2px solid #333;
         }
 
-        /* Música */
-        .music-box {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 10px 16px;
-            border-radius: 50px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            user-select: none;
-            z-index: 90;
-            transition: box-shadow 0.2s;
-        }
 
-        .music-box:hover {
-            box-shadow: 0 4px 16px rgba(255, 77, 109, 0.3);
-        }
-
-        @keyframes pulse-music {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.06);
-            }
-        }
 
         /* Modal final */
         #success-msg {
@@ -234,23 +241,19 @@
         <h2 style="color: #ff4d6d;">¡SABÍA QUE NO PODÍAS RESISTIRTE! 💖</h2>
         <p>Prepárate para el mejor 14 de febrero de tu vida. <br> Te amo mucho corazón.</p>
         <button class="btn" style="background: var(--rosa-principal);"
-            onclick="document.getElementById('success-msg').style.display='none'">¡Very Si! 💖</button>
+            onclick="playApplause(); document.getElementById('success-msg').style.display='none'">¡Very Si! 💖</button>
     </div>
 
-    <div class="music-box" id="music-box" onclick="toggleMusic()">
-        <span id="music-icon" style="font-size: 1.2rem;">▶️</span>
-        <span style="font-size: 0.8rem;">🎵 Clair de Lune - Debussy</span>
-    </div>
-
-    <audio id="bg-music" loop preload="auto">
-        <source src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Clair_de_lune_%28Debussy%29.ogg"
-            type="audio/ogg">
-    </audio>
 
     <script>
         // Función para que el botón "No" se mueva
+        var noShrunk = false;
+        var siScale = 1;
+
         function escapar() {
             const btnNo = document.getElementById('btn-no');
+            const btnSi = document.getElementById('btn-si');
+
             btnNo.style.position = 'fixed';
             const margin = 10;
             const maxX = window.innerWidth - btnNo.offsetWidth - margin;
@@ -261,10 +264,54 @@
             btnNo.style.left = x + 'px';
             btnNo.style.top = y + 'px';
             btnNo.style.zIndex = '50';
+
+            // Sonido whoosh al escapar
+            playWhoosh();
+
+            // Encoger "No" a la mitad solo una vez
+            if (!noShrunk) {
+                btnNo.style.transform = 'scale(0.7)';
+                noShrunk = true;
+            }
+
+            // Crecer "Sí" cada vez, reposicionarlo centrado y que no se salga
+            siScale += 0.25;
+            var baseW = btnSi.scrollWidth;
+            var baseH = btnSi.scrollHeight;
+            var maxScaleW = (window.innerWidth * 0.95) / baseW;
+            var maxScaleH = (window.innerHeight * 0.85) / baseH;
+            var maxScale = Math.min(maxScaleW, maxScaleH);
+            if (siScale > maxScale) siScale = maxScale;
+
+            // Fijar el botón centrado en pantalla para que no se salga
+            btnSi.style.position = 'fixed';
+            btnSi.style.zIndex = '60';
+            btnSi.style.left = '50%';
+            var scaledH = baseH * siScale;
+            var topPos = Math.max(10, (window.innerHeight - scaledH) / 2);
+            btnSi.style.top = topPos + 'px';
+            btnSi.style.transform = 'translateX(-50%) scale(' + siScale + ')';
+            btnSi.style.transformOrigin = 'center top';
+
+            // Sonido pop al crecer
+            playPop();
+
+            // Latido más intenso al crecer
+            var intensity = Math.min(0.3, (siScale - 1) * 0.08);
+            var speed = Math.max(0.4, 1.2 - (siScale - 1) * 0.15);
+            btnSi.style.animationDuration = speed + 's';
+            // Aumentar glow del box-shadow con la intensidad
+            var glowSize = Math.min(60, 15 + (siScale - 1) * 12);
+            var glowOpacity = Math.min(1, 0.4 + (siScale - 1) * 0.15);
+            btnSi.style.setProperty('--glow-size', glowSize + 'px');
+            btnSi.style.setProperty('--glow-opacity', glowOpacity);
         }
 
         // Función para el éxito
         function celebrar() {
+            // Sonido de celebración
+            playCelebration();
+
             // Confetti
             confetti({
                 particleCount: 150,
@@ -304,39 +351,98 @@
 
         setInterval(createHeart, 300);
 
-        // --- Música de fondo ---
-        var bgMusic = document.getElementById('bg-music');
-        var musicPlaying = false;
+        // --- Efectos de sonido con Web Audio API ---
+        var audioCtx = null;
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
 
-        function toggleMusic() {
-            if (musicPlaying) {
-                bgMusic.pause();
-                musicPlaying = false;
-            } else {
-                bgMusic.play();
-                musicPlaying = true;
+        // Sonido "whoosh" cuando el No escapa
+        function playWhoosh() {
+            var ctx = getAudioCtx();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.15);
+        }
+
+        // Sonido "pop" ascendente cuando el Sí crece
+        function playPop() {
+            var ctx = getAudioCtx();
+            var freq = 300 + (siScale - 1) * 150;
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(freq * 2, ctx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.35, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.18);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.18);
+        }
+
+        // Sonido de celebración al presionar Sí
+        function playCelebration() {
+            var ctx = getAudioCtx();
+            var notes = [523, 659, 784, 1047]; // Do Mi Sol Do (acorde mayor ascendente)
+            notes.forEach(function (freq, i) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.12);
+                gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.12);
+                gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + i * 0.12 + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.12 + 0.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(ctx.currentTime + i * 0.12);
+                osc.stop(ctx.currentTime + i * 0.12 + 0.4);
+            });
+        }
+
+        // Sonido de aplausos (ráfagas de ruido blanco filtrado)
+        function playApplause() {
+            var ctx = getAudioCtx();
+            var claps = 12;
+            for (var i = 0; i < claps; i++) {
+                (function (index) {
+                    var bufferSize = ctx.sampleRate * 0.04;
+                    var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                    var data = buffer.getChannelData(0);
+                    for (var j = 0; j < bufferSize; j++) {
+                        data[j] = (Math.random() * 2 - 1);
+                    }
+                    var noise = ctx.createBufferSource();
+                    noise.buffer = buffer;
+
+                    var bandpass = ctx.createBiquadFilter();
+                    bandpass.type = 'bandpass';
+                    bandpass.frequency.value = 1200 + Math.random() * 800;
+                    bandpass.Q.value = 0.8;
+
+                    var gain = ctx.createGain();
+                    var t = ctx.currentTime + index * 0.08 + Math.random() * 0.03;
+                    gain.gain.setValueAtTime(0.4 + Math.random() * 0.2, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
+
+                    noise.connect(bandpass);
+                    bandpass.connect(gain);
+                    gain.connect(ctx.destination);
+                    noise.start(t);
+                    noise.stop(t + 0.05);
+                })(i);
             }
-            updateMusicIcon();
         }
-
-        function updateMusicIcon() {
-            var icon = document.getElementById('music-icon');
-            var box = document.getElementById('music-box');
-            icon.textContent = musicPlaying ? '⏸️' : '▶️';
-            box.style.animation = musicPlaying ? 'pulse-music 1.5s infinite' : 'none';
-        }
-
-        // Auto-iniciar música en la primera interacción
-        function startOnInteraction() {
-            bgMusic.play().then(function () {
-                musicPlaying = true;
-                updateMusicIcon();
-            }).catch(function () { });
-            document.removeEventListener('click', startOnInteraction);
-            document.removeEventListener('touchstart', startOnInteraction);
-        }
-        document.addEventListener('click', startOnInteraction);
-        document.addEventListener('touchstart', startOnInteraction);
     </script>
 </body>
 
