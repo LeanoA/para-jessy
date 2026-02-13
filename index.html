@@ -151,12 +151,32 @@
             bottom: 20px;
             right: 20px;
             background: white;
-            padding: 10px;
+            padding: 10px 16px;
             border-radius: 50px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            z-index: 90;
+            transition: box-shadow 0.2s;
+        }
+
+        .music-box:hover {
+            box-shadow: 0 4px 16px rgba(255, 77, 109, 0.3);
+        }
+
+        @keyframes pulse-music {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
         }
 
         /* Modal final */
@@ -217,11 +237,15 @@
             onclick="document.getElementById('success-msg').style.display='none'">¡Very Si! 💖</button>
     </div>
 
-    <div class="music-box">
-        <span style="font-size: 0.8rem;">🎵 I'm Yours - Jason Mraz</span>
-        <iframe width="0" height="0" src="https://www.youtube.com/embed/EkHTsc9PU2A?autoplay=1" frameborder="0"
-            allow="autoplay"></iframe>
+    <div class="music-box" id="music-box" onclick="toggleMusic()">
+        <span id="music-icon" style="font-size: 1.2rem;">▶️</span>
+        <span style="font-size: 0.8rem;">🎵 Clair de Lune - Debussy</span>
     </div>
+
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Clair_de_lune_%28Debussy%29.ogg"
+            type="audio/ogg">
+    </audio>
 
     <script>
         // Función para que el botón "No" se mueva
@@ -279,6 +303,40 @@
         }
 
         setInterval(createHeart, 300);
+
+        // --- Música de fondo ---
+        var bgMusic = document.getElementById('bg-music');
+        var musicPlaying = false;
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicPlaying = false;
+            } else {
+                bgMusic.play();
+                musicPlaying = true;
+            }
+            updateMusicIcon();
+        }
+
+        function updateMusicIcon() {
+            var icon = document.getElementById('music-icon');
+            var box = document.getElementById('music-box');
+            icon.textContent = musicPlaying ? '⏸️' : '▶️';
+            box.style.animation = musicPlaying ? 'pulse-music 1.5s infinite' : 'none';
+        }
+
+        // Auto-iniciar música en la primera interacción
+        function startOnInteraction() {
+            bgMusic.play().then(function () {
+                musicPlaying = true;
+                updateMusicIcon();
+            }).catch(function () { });
+            document.removeEventListener('click', startOnInteraction);
+            document.removeEventListener('touchstart', startOnInteraction);
+        }
+        document.addEventListener('click', startOnInteraction);
+        document.addEventListener('touchstart', startOnInteraction);
     </script>
 </body>
 
